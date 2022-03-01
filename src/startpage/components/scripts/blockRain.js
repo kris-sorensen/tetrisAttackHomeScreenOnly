@@ -1,38 +1,38 @@
-/// Setup
+// import  from './scripts/blockRain.js';
 
 // Size of browser viewport.
 
 //detect screen size changes so you can resize collumns and rows automatically.
-window.addEventListener("resize", (event) => {
-  // setColsAndRows()
-  windowWidth = document.body.clientWidth;
-  WindowHeight = document.body.clientHeight;
-  //BLOCK_SIZE =
-  // determine blocksize and dive by width to resize board.
-});
-let windowWidth = document.body.clientWidth;
-let windowHeight = document.body.clientHeight;
+// window.addEventListener("resize", (event) => {
+//   // setColsAndRows()
+//   windowWidth = document.body.clientWidth;
+//   WindowHeight = document.body.clientHeight;
+//   //BLOCK_SIZE =
+//   // determine blocksize and dive by width to resize board.
+// });
+// let windowWidth = document.body.clientWidth;
+// let windowHeight = document.body.clientHeight;
 
 let COLS = 30;
 let ROWS = 20; // will be set by setColsandRows()
 let BLOCK_SIZE = 30; // will be set by setColsandRows()
 
-const canvas = document.querySelector("canvas");
-canvas.width = windowWidth;
-const ctx = canvas.getContext("2d");
+// const canvas = document.querySelector("canvas");
+// canvas.width = windowWidth;
+// const ctx = canvas.getContext("2d");
 
 // Calculate size of canvas from constants.
-ctx.canvas.width = windowWidth - 4;
-ctx.canvas.height = windowHeight - 4;
-console.log("ctx.canvas.height:", ctx.canvas.height);
+// ctx.canvas.width = windowWidth - 4;
+// ctx.canvas.height = windowHeight - 4;
+// console.log("ctx.canvas.height:", ctx.canvas.height);
 
 // Scale blocks
-ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
+// ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
 
 //create board
 class Board {
   constructor(ctx) {
-    this.ctx = ctx;
+    // this.ctx = ctx;
     this.grid = this.getEmptyBoard();
   }
 
@@ -41,14 +41,14 @@ class Board {
       { length: ROWS },
       () => Array(COLS).fill(0) //fill board with 0s
     );
-
+    console.log(board);
     // board.
   }
 }
 // follow board logic on website to create board.
 // use html and css floatng div to create
 
-const game = new Board(ctx);
+const game = new Board();
 
 console.log(game);
 

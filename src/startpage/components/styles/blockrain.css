@@ -1,3 +1,15 @@
-h1 {
-  font-size: 90px;
+.blockrain {
+}
+.row {
+  display: flex;
+  align-items: center;
+  /* justify-content: center; */
+  flex-direction: collumns;
+}
+
+.cell {
+  width: 2.7rem;
+  height: 2.7rem;
+  border: 0.5px solid #eee;
+  background-color: #222;
 }

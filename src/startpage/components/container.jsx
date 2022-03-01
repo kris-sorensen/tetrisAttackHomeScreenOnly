@@ -1,23 +1,22 @@
 import React, { Component } from "react";
 import Blockrain from "./blockrain";
-import Container from "./container";
-import "./styles/canvas.css";
+import Float from "./float";
+import "./styles/container.css";
 
-class Canvas extends Component {
+class Container extends Component {
   constructor(props) {
     super(props);
   }
   state = {};
   render() {
     return (
-      <div className="canvas">
+      <div className="container">
         {" "}
-        <p>hi</p>
         <Blockrain></Blockrain>
-        {/* <Container></Container> */}
+        {/* <Float></Float> */}
       </div>
     );
   }
 }
 
-export default Canvas;
+export default Container;
