@@ -9,7 +9,7 @@ class Blockrain extends Component {
     cells: 65,
     blockSize: 30,
     board: this.createBoard(),
-    dropObj: {},
+    dropArr: [], // each piece will be obj with{x: y: color:}
   };
   componentDidMount() {
     this.place();
@@ -20,7 +20,11 @@ class Blockrain extends Component {
     // console.log(tetriminos);
     const array = [];
     for (let i = 0; i <= this.state.rows; i++) {
-      array.push(<div className="row">{this.inputCells(i)}</div>);
+      array.push(
+        <div className="row" key={i}>
+          {this.inputCells(i)}
+        </div>
+      );
     }
 
     return <div className="canvas">{array.map((row) => row)}</div>;
@@ -47,20 +51,23 @@ class Blockrain extends Component {
   place() {
     // pick a random tetrimino
     const tetrimino = tetriminos[Math.floor(Math.random() * tetriminos.length)];
-    // pick spot to place tetrimino
-    const placeHere = this.find(tetrimino.length, tetrimino.cordinates);
+    // pick random spot to place tetrimino
+    const placeHere = this.find(tetrimino.cordinates);
     console.log("placeHere:", placeHere);
-
     // grab tetrimino object at that location(cant just be a refrence). will go into dropObj with the appropriate amount added to y for right location.
+        //grap array from object and color, send into dropObj as object
+    const dropObj = Object.create()
+    dropObj.color = tetrimino.color;
+
+    dropObj.xy = tetrimino.cordinates[];
 
     // add appropriate amount to y to hit top location
     // update matrice with -1 at final spot ()
     // place into dropObj with key of resting location
   }
 
-  find(tetriminoLength, cordinates) {
+  find(cordinates) {
     const { board } = this.state;
-    console.log(board);
     // find available locations
     // find open spots for tetrimino
     for (let x = board.length - 1; x > 0; x--) {
@@ -68,13 +75,15 @@ class Blockrain extends Component {
       // stop board if no spots available to place piece
       if (x === 1) return this.stop(); // might need to adjust 1
       for (let y = 0; y < board[x].length; y++) {
-        let b = board[x][y];
-        if (b === 0) {
-          let freeSpace = true;
-          console.log(cordinates.length);
+        let freeSpace = true;
+        if (board[x][y] === 0) {
+          freeSpace = true;
+          // looping over cordinates of tetrimino to see if it will fit
           for (let z = 1; z < cordinates.length; z++) {
-            // if (board[x + cordinates[0]][y + cordinates[1]] !== 0)
-            //   freeSpace = false;
+            if (board[x + cordinates[z][0]][y + cordinates[z][1]] !== 0) {
+              console.log("xy", x, y);
+              freeSpace = false;
+            }
           }
           if (freeSpace) {
             array.push([x, y]);
@@ -82,6 +91,7 @@ class Blockrain extends Component {
         }
       }
       // if found a spot return a random spot to place tetrimino.
+      console.log(array);
       if (array.length > 0)
         return array[Math.floor(Math.random() * array.length)];
     }
@@ -89,6 +99,8 @@ class Blockrain extends Component {
 
   drop() {
     //Order: drop, paint, check for matching key values and delete those.
+      // use map to update all values
+    // if y is negative skip paint.
     // update dom based on x's and y's of each property in object
     //add 1 to all x's and check for piece keys and value cordinates matching.
     // if match change matrice to -2 and trigger rowComplete()?
@@ -111,5 +123,3 @@ class Blockrain extends Component {
 }
 
 export default Blockrain;
-
-// * amount of rows
