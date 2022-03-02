@@ -3,8 +3,6 @@ html {
   /* overflow: hidden; */
 }
 
-
-
 body {
   margin: 0;
   /* background: var(--color-background); */
@@ -12,6 +10,7 @@ body {
   /* font-family: "Tetris Regular", Inter, arial, Arial, Helvetica, sans-serif; */
 
   font-size: 1.7rem;
+  background-color: black;
 
   /* line-height: 1.5; */
 }

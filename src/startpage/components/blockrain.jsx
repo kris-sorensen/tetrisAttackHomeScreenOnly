@@ -5,11 +5,12 @@ import { tetriminos } from "./scripts/tetriminos";
 
 class Blockrain extends Component {
   state = {
-    rows: 32, // make dynamic based on the screen size
+    rows: 32, // * make dynamic based on the screen size
     cells: 65,
     blockSize: 30,
     board: this.createBoard(),
-    dropArr: [], // each piece will be obj with{x: y: color:}
+    cellBackground: "#000", //* change to 222 ?
+    dropArr: [],
   };
   componentDidMount() {
     for (let i = 0; i < 40; i++) {
@@ -35,7 +36,17 @@ class Blockrain extends Component {
     const array = [];
     for (let i = 0; i <= this.state.cells; i++) {
       const id = row.toString() + i;
-      array.push(<div className="cell" id={id} key={id} />);
+      array.push(
+        <div
+          style={{
+            backgroundColor: this.state.cellBackground,
+          }}
+          className="cell"
+          ref={id}
+          id={id}
+          key={id}
+        />
+      );
     }
     return array;
   }
@@ -64,7 +75,7 @@ class Blockrain extends Component {
       const x = tetrimino.cordinates[i][0];
       const y = tetrimino.cordinates[i][1];
       //update board with final resting location of tetrmino
-      this.state.board[x + placeHere[0]][y + placeHere[1]] = -1;
+      this.state.board[x + placeHere[0]][y + placeHere[1]] = -1; // * might have to use setState?
       // console.log(x + placeHere[0], x + placeHere[1]);
       dropRefrence.push([x, y + placeHere[1]]);
     }
@@ -112,46 +123,47 @@ class Blockrain extends Component {
     const { dropArr } = this.state;
     // add 1 to x to drop piece
     for (let i = 0; i < dropArr.length; i++) {
+      // if at resting spot
       if (dropArr[i][0][0] === dropArr[i][5][0]) {
-        // -2
         for (let j = 0; j < 4; j++) {
           const xx = dropArr[i][j][0];
           const yy = dropArr[i][j][1];
           board[xx][yy] = -2;
         }
         dropArr.shift(); // shift CHECK d
-        console.log("dropArr:", dropArr);
+        // console.log("dropArr:", dropArr);
       }
       //access x
+      for (let x = 0; x < 4; x++) {
+        this.paint(dropArr[i][x][0], dropArr[i][x][1], dropArr[i][4]);
+      }
       for (let x = 0; x < 4; x++) {
         // console.log("drop Arr 1", dropArr[i][x]);
         dropArr[i][x][0] = dropArr[i][x][0] + 1;
         // console.log("drop Arr 2", dropArr[i][x]);
       }
-      // dropArr[i][0];
+
       // console.log("dropArr:", dropArr);
       // console.log("dropArr spot:", dropArr[i][0][0]);
     }
-    console.log("this.board = : ", board);
-    // loop ..
-    // if first === last turn this.state.board(at [0]) ---> -2 and all other spots, and unshift the array. it should always be the first element.
-
-    // take 1 from x
-
-    //Order: drop, paint, check for matching key values and delete those.
-    // use map to update all values
-    // if y is negative skip paint.
-    // update dom based on x's and y's of each property in object
-    //add 1 to all x's and check for piece keys and value cordinates matching.
-    // if match change matrice to -2 and trigger rowComplete()?
-    // delete from arr
+    // console.log("this.board = : ", board);
   }
 
-  paint() {
-    // iterate over obj. enteries (this.state.board)
-    //if( ignore any negative x values
-    // id will equal the concatination of x and y
-    // color will equal color prop
+  paint(x, y, color) {
+    const oldXY = `${x}${y}`;
+    const newXY = `${x + 1}${y}`;
+    const oldReference = this.oldXY; // The DOM element
+    oldReference.style.backgroundColor = "222"; //* Hard coded for now.
+    const newReference = this.newXY.current; // The DOM element
+    newReference.style.backgroundColor = color; //* Hard coded for now.
+
+    //? https://reactjs.org/docs/refs-and-the-dom.html#legacy-api-string-refs might need to use this to change color
+
+    // if(xx)
+    //   setState((prevState) => ({
+    //     : prevState.stateName + 1
+    //  }))
+    // dont paint negative numbers
   }
 
   rowComplete() {
