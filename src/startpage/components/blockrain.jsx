@@ -11,9 +11,10 @@ class Blockrain extends Component {
     board: this.createBoard(),
     cellBackground: "#000", //* change to 222 ?
     dropArr: [],
+    restingArr: [],
   };
   componentDidMount() {
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 50; i++) {
       this.place();
       this.drop();
     }
@@ -21,7 +22,7 @@ class Blockrain extends Component {
 
   render() {
     const array = [];
-    for (let i = 0; i <= this.state.rows; i++) {
+    for (let i = 0; i <= this.state.rows - 1; i++) {
       array.push(
         <div className="row" key={i}>
           {this.inputCells(i)}
@@ -32,21 +33,15 @@ class Blockrain extends Component {
     return <div className="canvas">{array.map((row) => row)}</div>;
   }
 
+  handleDrop() {}
+
   inputCells(row) {
     const array = [];
-    for (let i = 0; i <= this.state.cells; i++) {
+    for (let i = 0; i <= this.state.cells - 1; i++) {
       const id = row.toString() + i;
-      array.push(
-        <div
-          style={{
-            backgroundColor: this.state.cellBackground,
-          }}
-          className="cell"
-          ref={id}
-          id={id}
-          key={id}
-        />
-      );
+      const cellColorClass = "_" + Math.abs(this.state.board[row][i]);
+      const allClasses = `cell ${cellColorClass}`;
+      array.push(<div className={allClasses} ref={id} id={id} key={id} />);
     }
     return array;
   }
@@ -150,20 +145,12 @@ class Blockrain extends Component {
   }
 
   paint(x, y, color) {
-    const oldXY = `${x}${y}`;
-    const newXY = `${x + 1}${y}`;
-    const oldReference = this.oldXY; // The DOM element
-    oldReference.style.backgroundColor = "222"; //* Hard coded for now.
-    const newReference = this.newXY.current; // The DOM element
-    newReference.style.backgroundColor = color; //* Hard coded for now.
-
-    //? https://reactjs.org/docs/refs-and-the-dom.html#legacy-api-string-refs might need to use this to change color
-
-    // if(xx)
-    //   setState((prevState) => ({
-    //     : prevState.stateName + 1
-    //  }))
-    // dont paint negative numbers
+    // const oldXY = `${x}${y}`;
+    // const newXY = `${x + 1}${y}`;
+    // const oldReference = this.oldXY; // The DOM element
+    // oldReference.style.backgroundColor = "222"; //* Hard coded for now.
+    // const newReference = this.newXY.current; // The DOM element
+    // newReference.style.backgroundColor = color; //* Hard coded for now.
   }
 
   rowComplete() {

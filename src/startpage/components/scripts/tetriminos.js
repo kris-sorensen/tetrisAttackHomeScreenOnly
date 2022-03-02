@@ -1,73 +1,67 @@
 const L = {
-  length: 3,
   cordinates: [
     [0, 0],
     [0, 1],
     [0, 2],
     [-1, 2],
   ],
-  color: "#ba74fc",
+  color: 2,
 };
 const J = {
-  length: 3,
   cordinates: [
     [0, 0],
     [0, 1],
     [0, 2],
     [-1, 0],
   ],
-  color: "#ec64da",
+  color: 3,
 };
 const S = {
-  length: 2,
   cordinates: [
     [0, 0],
     [0, 1],
     [-1, 1],
     [-1, 2],
   ],
-  color: "#6bb9a2",
+  color: 4,
 };
 const Z = {
-  length: 2,
   cordinates: [
     [0, 0],
     [0, 1],
     [-1, -1],
     [-1, 0],
   ],
-  color: "#ff6ca6",
+  color: 5,
 };
 const O = {
-  length: 2,
   cordinates: [
     [0, 0],
     [0, 1],
     [-1, 0],
     [-1, 1],
   ],
-  color: "#ff9677",
+  color: 6,
 };
 const T = {
-  length: 1,
   cordinates: [
     [0, 0],
     [-1, -1],
     [-1, 0],
     [-1, 1],
   ],
-  color: "#f9f871",
+  color: 7,
 };
 const I = {
-  length: 1,
   cordinates: [
     [0, 0],
     [-1, 0],
     [-2, 0],
     [-3, 0],
   ],
-  color: "#00aeef",
+  color: 8,
 }; // vertical
+//might can delete alperties
 
 // for cordinates: start from bottom of piece and work way up. when droping if undefined because it is off the board don't show. this will give it the look of coming onto the board from somewhere higher. will look cooler
 
