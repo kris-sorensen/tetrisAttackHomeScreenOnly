@@ -9,15 +9,12 @@ class Blockrain extends Component {
     cells: 65,
     blockSize: 30,
     board: this.createBoard(),
-    cellBackground: "#000", //* change to 222 ?
     dropArr: [],
     restingArr: [],
+    restingSpotPlaceHolderArr: [],
   };
   componentDidMount() {
-    for (let i = 0; i < 50; i++) {
-      this.place();
-      this.drop();
-    }
+    this.loop();
   }
 
   render() {
@@ -33,7 +30,51 @@ class Blockrain extends Component {
     return <div className="canvas">{array.map((row) => row)}</div>;
   }
 
-  handleDrop() {}
+  loop() {
+    setInterval(() => {
+      this.place();
+    }, 300);
+    setInterval(() => {
+      this.drop();
+      // console.log("Board after drop ", this.state.board);
+    }, 50);
+  }
+
+  handlePaint() {
+    const { dropArr } = this.state;
+    const { restingSpotPlaceHolderArr } = this.state;
+    const { restingArr } = this.state;
+
+    const board = this.createBoard();
+    for (let i = 0; i < restingArr.length; i++) {
+      for (let j = 0; j < 4; j++) {
+        board[restingArr[i][j][0]][restingArr[i][j][1]] = restingArr[i][4];
+      }
+    }
+    for (let i = 0; i < restingSpotPlaceHolderArr.length; i++) {
+      board[restingSpotPlaceHolderArr[i][0]][
+        restingSpotPlaceHolderArr[i][1]
+      ] = 1;
+    }
+    // console.log("drop arr in set state ", dropArr);
+    for (let i = 0; i < dropArr.length; i++) {
+      for (let j = 0; j < 4; j++) {
+        if (dropArr[i][j][0] >= 0) {
+          board[dropArr[i][j][0]][dropArr[i][j][1]] = dropArr[i][4];
+          // console.log("here");
+          // console.log(
+          //   "drop arr spot test ",
+          //   dropArr[i][j][0],
+          //   dropArr[i][j][1],
+          //   dropArr[i][4]
+          // );
+        }
+      }
+    }
+
+    this.setState({ board });
+    // console.log("state board ", board);
+  }
 
   inputCells(row) {
     const array = [];
@@ -70,14 +111,22 @@ class Blockrain extends Component {
       const x = tetrimino.cordinates[i][0];
       const y = tetrimino.cordinates[i][1];
       //update board with final resting location of tetrmino
-      this.state.board[x + placeHere[0]][y + placeHere[1]] = -1; // * might have to use setState?
-      // console.log(x + placeHere[0], x + placeHere[1]);
+      // this.state.board[x + placeHere[0]][y + placeHere[1]] = -1; // ? might have to use setState instead remove board manipulation
       dropRefrence.push([x, y + placeHere[1]]);
+      this.state.restingSpotPlaceHolderArr.push([placeHere[0], placeHere[1]]); //* NEEED TO FIX - not correct cordinates
     }
+    //? new logic: place resting place of dropping piece in restingSpotPlaceHolderArr.
+    // console.log(x + placeHere[0], x + placeHere[1]);
     dropRefrence.push(tetrimino.color);
     dropRefrence.push(placeHere);
     // push to dropArr
     this.state.dropArr.push(dropRefrence);
+    // console.log("dropRefrence:", dropRefrence);
+
+    // console.log(
+    //   "future Resting Spot Arr: ",
+    //   this.state.restingSpotPlaceHolderArr
+    // );
     // console.log(this.state.dropArr);
     // console.log(this.state.board);
   }
@@ -116,6 +165,8 @@ class Blockrain extends Component {
   drop() {
     const { board } = this.state;
     const { dropArr } = this.state;
+    const { restingSpotPlaceHolderArr } = this.state;
+    const { restingArr } = this.state;
     // add 1 to x to drop piece
     for (let i = 0; i < dropArr.length; i++) {
       // if at resting spot
@@ -123,20 +174,30 @@ class Blockrain extends Component {
         for (let j = 0; j < 4; j++) {
           const xx = dropArr[i][j][0];
           const yy = dropArr[i][j][1];
-          board[xx][yy] = -2;
+          board[xx][yy] = -Math.abs(dropArr[i][4]); //? new Logic: changed from -1 to value at color [4] // may not need logic here
         }
-        dropArr.shift(); // shift CHECK d
+        const restingSpot = dropArr.shift(); // shift CHECK d
         // console.log("dropArr:", dropArr);
+        //? new logic: remove from old array
+        restingSpotPlaceHolderArr.shift();
+        restingSpotPlaceHolderArr.shift();
+        restingSpotPlaceHolderArr.shift();
+        restingSpotPlaceHolderArr.shift();
+        restingSpot[4] = -Math.abs(restingSpot[4]);
+        restingArr.push(restingSpot);
+        // console.log("resting arr should be - at [4] ", restingArr);
       }
-      //access x
-      for (let x = 0; x < 4; x++) {
-        this.paint(dropArr[i][x][0], dropArr[i][x][1], dropArr[i][4]);
-      }
+      // * need to change logic ---->
+      // //access x
+      // for (let x = 0; x < 4; x++) {
+      //   this.paint(dropArr[i][x][0], dropArr[i][x][1], dropArr[i][4]);
+      // }
       for (let x = 0; x < 4; x++) {
         // console.log("drop Arr 1", dropArr[i][x]);
         dropArr[i][x][0] = dropArr[i][x][0] + 1;
         // console.log("drop Arr 2", dropArr[i][x]);
       }
+      this.handlePaint();
 
       // console.log("dropArr:", dropArr);
       // console.log("dropArr spot:", dropArr[i][0][0]);
