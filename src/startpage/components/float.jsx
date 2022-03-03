@@ -1,18 +1,30 @@
 import React, { Component } from "react";
+import "./styles/float.css";
+// import logo from "images/tetrisLogo.png";
 
 class Float extends Component {
-  state = {};
+  state = {
+    url: null,
+  };
+  handleClick() {
+    console.log("click"); //* switch to url
+  }
   render() {
     return (
-      <>
-        <img src="" alt="Logo" srcset="" />
-        <div className="singleMultiSlider"></div>
-        <div className="play"></div> // triggers a popup that lets use choose
-        your name or login with 4 digit code ßso you can use your same tag.
-        <div className="topScores"></div> // goes to an arcade like top scores
-        page.
-        <div className="records"></div> Endless scroll
-      </>
+      <div className="float">
+        <div className="content">
+          <img
+            src={require("./images/tetrisLogo.png")}
+            alt="Logo"
+            // srcSet="./images/tetrisLogo.png"
+            className="logo"
+          />
+          <div className="singleMultiSlider"></div>
+          <button className="play" onClick={() => this.handleClick()}>
+            Play
+          </button>{" "}
+        </div>
+      </div>
     );
   }
 }

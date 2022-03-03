@@ -6,7 +6,7 @@ import { tetriminos } from "./scripts/tetriminos";
 class Blockrain extends Component {
   state = {
     rows: 32, // * make dynamic based on the screen size
-    cells: 65,
+    cells: 66,
     blockSize: 30,
     board: this.createBoard(),
     dropArr: [],
@@ -33,7 +33,7 @@ class Blockrain extends Component {
   loop() {
     setInterval(() => {
       this.place();
-    }, 300);
+    }, 2000);
     setInterval(() => {
       this.drop();
       // console.log("Board after drop ", this.state.board);
@@ -51,11 +51,11 @@ class Blockrain extends Component {
         board[restingArr[i][j][0]][restingArr[i][j][1]] = restingArr[i][4];
       }
     }
-    for (let i = 0; i < restingSpotPlaceHolderArr.length; i++) {
-      board[restingSpotPlaceHolderArr[i][0]][
-        restingSpotPlaceHolderArr[i][1]
-      ] = 1;
-    }
+    // for (let i = 0; i < restingSpotPlaceHolderArr.length; i++) {
+    //   board[restingSpotPlaceHolderArr[i][0]][
+    //     restingSpotPlaceHolderArr[i][1]
+    //   ] = 1;
+    // }
     // console.log("drop arr in set state ", dropArr);
     for (let i = 0; i < dropArr.length; i++) {
       for (let j = 0; j < 4; j++) {
@@ -88,10 +88,10 @@ class Blockrain extends Component {
   }
 
   createBoard() {
-    // need to replace length with state property rows. and Array(65) with cells. hardcoded for now
+    //* need to replace length with state property rows. and Array(65) with cells. hardcoded for now
     const board = Array.from(
       { length: 32 },
-      () => Array(65).fill(0) //fill board with 0s,
+      () => Array(66).fill(0) //fill board with 0s,
     );
     return board;
   }
@@ -101,19 +101,15 @@ class Blockrain extends Component {
     const tetrimino = tetriminos[Math.floor(Math.random() * tetriminos.length)];
     // pick random spot to place tetrimino
     const placeHere = this.find(tetrimino.cordinates);
-
-    //update board to show that there will be a tetrimino dropping to the placeHere location
-    for (let i = 0; i < tetrimino.cordinates.length; i++) {}
-
     // create data to place into dropArr so that it will drop and paint this tetrimino while tetrimino is moving on board.
     const dropRefrence = [];
     for (let i = 0; i < tetrimino.cordinates.length; i++) {
       const x = tetrimino.cordinates[i][0];
       const y = tetrimino.cordinates[i][1];
-      //update board with final resting location of tetrmino
-      // this.state.board[x + placeHere[0]][y + placeHere[1]] = -1; // ? might have to use setState instead remove board manipulation
+
       dropRefrence.push([x, y + placeHere[1]]);
-      this.state.restingSpotPlaceHolderArr.push([placeHere[0], placeHere[1]]); //* NEEED TO FIX - not correct cordinates
+
+      // this.state.restingSpotPlaceHolderArr.push([placeHere[0], placeHere[1]]); //* NEEED TO FIX - not correct cordinates
     }
     //? new logic: place resting place of dropping piece in restingSpotPlaceHolderArr.
     // console.log(x + placeHere[0], x + placeHere[1]);
@@ -133,12 +129,12 @@ class Blockrain extends Component {
 
   find(cordinates) {
     const { board } = this.state;
-    // find available locations
     // find open spots for tetrimino
     for (let x = board.length - 1; x > 0; x--) {
       const array = [];
       // stop board if no spots available to place piece
-      if (x === 1) return this.stop(); // might need to adjust 1
+      if (x === 1) return this.stop(); // *might need to adjust 1
+
       for (let y = 0; y < board[x].length; y++) {
         let freeSpace = true;
         if (board[x][y] === 0) {
@@ -148,6 +144,7 @@ class Blockrain extends Component {
             if (board[x + cordinates[z][0]][y + cordinates[z][1]] !== 0) {
               // console.log("xy", x, y);
               freeSpace = false;
+              //* add continue statement here
             }
           }
           if (freeSpace) {
@@ -157,8 +154,9 @@ class Blockrain extends Component {
       }
       // if found a spot return a random spot to place tetrimino.
 
-      if (array.length > 0)
+      if (array.length > 0) {
         return array[Math.floor(Math.random() * array.length)];
+      }
     }
   }
 

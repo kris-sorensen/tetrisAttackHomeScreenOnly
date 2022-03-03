@@ -12,8 +12,8 @@ class Container extends Component {
     return (
       <div className="container">
         {" "}
+        <Float></Float>
         <Blockrain></Blockrain>
-        {/* <Float></Float> */}
       </div>
     );
   }
