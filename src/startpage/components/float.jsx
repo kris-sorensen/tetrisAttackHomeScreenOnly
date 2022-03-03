@@ -7,8 +7,17 @@ class Float extends Component {
     url: null,
   };
   handleClick() {
+    fetch("/play", {
+      method: "GET",
+    })
+      // .then(res => res.json())
+      // .then(data => {
+      //   body.style.background = data.color;
+      // })
+      .catch((err) => console.log(err));
     console.log("click"); //* switch to url
   }
+
   render() {
     return (
       <div className="float">
