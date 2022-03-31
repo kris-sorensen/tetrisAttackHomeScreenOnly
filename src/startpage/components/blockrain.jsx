@@ -1,17 +1,17 @@
 import React, { Component } from "react";
-// import Row from "./rows";
+// import Row from "./rows";R
 import "./styles/blockrain.css";
 import { tetriminos } from "./scripts/tetriminos";
 
 class Blockrain extends Component {
   state = {
-    rows: 32, // * make dynamic based on the screen size
+    rows: 31, // * make dynamic based on the screen size
     cells: 66,
     blockSize: 30,
     board: this.createBoard(),
     dropArr: [],
     restingArr: [],
-    restingSpotPlaceHolderArr: [],
+    end: false,
   };
   componentDidMount() {
     this.loop();
@@ -31,18 +31,19 @@ class Blockrain extends Component {
   }
 
   loop() {
-    setInterval(() => {
-      this.place();
-    }, 2000);
-    setInterval(() => {
-      this.drop();
-      // console.log("Board after drop ", this.state.board);
-    }, 50);
+    if (!this.state.end) {
+      let placePiece = setInterval(() => {
+        this.place();
+      }, 2000);
+      let dropLoop = setInterval(() => {
+        this.drop();
+        this.handlePaint();
+      }, 50);
+    }
   }
 
   handlePaint() {
     const { dropArr } = this.state;
-    const { restingSpotPlaceHolderArr } = this.state;
     const { restingArr } = this.state;
 
     const board = this.createBoard();
@@ -51,29 +52,16 @@ class Blockrain extends Component {
         board[restingArr[i][j][0]][restingArr[i][j][1]] = restingArr[i][4];
       }
     }
-    // for (let i = 0; i < restingSpotPlaceHolderArr.length; i++) {
-    //   board[restingSpotPlaceHolderArr[i][0]][
-    //     restingSpotPlaceHolderArr[i][1]
-    //   ] = 1;
-    // }
-    // console.log("drop arr in set state ", dropArr);
+
     for (let i = 0; i < dropArr.length; i++) {
       for (let j = 0; j < 4; j++) {
         if (dropArr[i][j][0] >= 0) {
           board[dropArr[i][j][0]][dropArr[i][j][1]] = dropArr[i][4];
-          // console.log("here");
-          // console.log(
-          //   "drop arr spot test ",
-          //   dropArr[i][j][0],
-          //   dropArr[i][j][1],
-          //   dropArr[i][4]
-          // );
         }
       }
     }
 
     this.setState({ board });
-    // console.log("state board ", board);
   }
 
   inputCells(row) {
@@ -82,7 +70,7 @@ class Blockrain extends Component {
       const id = row.toString() + i;
       const cellColorClass = "_" + Math.abs(this.state.board[row][i]);
       const allClasses = `cell ${cellColorClass}`;
-      array.push(<div className={allClasses} ref={id} id={id} key={id} />);
+      array.push(<div className={allClasses} key={id} />);
     }
     return array;
   }
@@ -90,7 +78,7 @@ class Blockrain extends Component {
   createBoard() {
     //* need to replace length with state property rows. and Array(65) with cells. hardcoded for now
     const board = Array.from(
-      { length: 32 },
+      { length: 31 },
       () => Array(66).fill(0) //fill board with 0s,
     );
     return board;
@@ -108,23 +96,11 @@ class Blockrain extends Component {
       const y = tetrimino.cordinates[i][1];
 
       dropRefrence.push([x, y + placeHere[1]]);
-
-      // this.state.restingSpotPlaceHolderArr.push([placeHere[0], placeHere[1]]); //* NEEED TO FIX - not correct cordinates
     }
-    //? new logic: place resting place of dropping piece in restingSpotPlaceHolderArr.
-    // console.log(x + placeHere[0], x + placeHere[1]);
     dropRefrence.push(tetrimino.color);
     dropRefrence.push(placeHere);
     // push to dropArr
     this.state.dropArr.push(dropRefrence);
-    // console.log("dropRefrence:", dropRefrence);
-
-    // console.log(
-    //   "future Resting Spot Arr: ",
-    //   this.state.restingSpotPlaceHolderArr
-    // );
-    // console.log(this.state.dropArr);
-    // console.log(this.state.board);
   }
 
   find(cordinates) {
@@ -133,19 +109,23 @@ class Blockrain extends Component {
     for (let x = board.length - 1; x > 0; x--) {
       const array = [];
       // stop board if no spots available to place piece
-      if (x === 1) return this.stop(); // *might need to adjust 1
+      if (x === 1) return this.handleStop(); // *might need to adjust 1
 
       for (let y = 0; y < board[x].length; y++) {
         let freeSpace = true;
         if (board[x][y] === 0) {
-          freeSpace = true;
           // looping over cordinates of tetrimino to see if it will fit
           for (let z = 1; z < cordinates.length; z++) {
             if (board[x + cordinates[z][0]][y + cordinates[z][1]] !== 0) {
-              // console.log("xy", x, y);
               freeSpace = false;
-              //* add continue statement here
+              break;
             }
+            //* check to see if space is open above it
+            // if (board[x - 1 + cordinates[z][0]][y + cordinates[z][1]] !== 0) {
+            //   // console.log("xy", x, y);
+            //   freeSpace = false;
+            //   //* add continue statement here
+            // }
           }
           if (freeSpace) {
             array.push([x, y]);
@@ -163,61 +143,31 @@ class Blockrain extends Component {
   drop() {
     const { board } = this.state;
     const { dropArr } = this.state;
-    const { restingSpotPlaceHolderArr } = this.state;
     const { restingArr } = this.state;
+
     // add 1 to x to drop piece
     for (let i = 0; i < dropArr.length; i++) {
       // if at resting spot
       if (dropArr[i][0][0] === dropArr[i][5][0]) {
-        for (let j = 0; j < 4; j++) {
-          const xx = dropArr[i][j][0];
-          const yy = dropArr[i][j][1];
-          board[xx][yy] = -Math.abs(dropArr[i][4]); //? new Logic: changed from -1 to value at color [4] // may not need logic here
-        }
         const restingSpot = dropArr.shift(); // shift CHECK d
-        // console.log("dropArr:", dropArr);
-        //? new logic: remove from old array
-        restingSpotPlaceHolderArr.shift();
-        restingSpotPlaceHolderArr.shift();
-        restingSpotPlaceHolderArr.shift();
-        restingSpotPlaceHolderArr.shift();
+
         restingSpot[4] = -Math.abs(restingSpot[4]);
         restingArr.push(restingSpot);
-        // console.log("resting arr should be - at [4] ", restingArr);
       }
       // * need to change logic ---->
-      // //access x
-      // for (let x = 0; x < 4; x++) {
-      //   this.paint(dropArr[i][x][0], dropArr[i][x][1], dropArr[i][4]);
-      // }
+
       for (let x = 0; x < 4; x++) {
-        // console.log("drop Arr 1", dropArr[i][x]);
         dropArr[i][x][0] = dropArr[i][x][0] + 1;
-        // console.log("drop Arr 2", dropArr[i][x]);
       }
-      this.handlePaint();
-
-      // console.log("dropArr:", dropArr);
-      // console.log("dropArr spot:", dropArr[i][0][0]);
     }
-    // console.log("this.board = : ", board);
-  }
-
-  paint(x, y, color) {
-    // const oldXY = `${x}${y}`;
-    // const newXY = `${x + 1}${y}`;
-    // const oldReference = this.oldXY; // The DOM element
-    // oldReference.style.backgroundColor = "222"; //* Hard coded for now.
-    // const newReference = this.newXY.current; // The DOM element
-    // newReference.style.backgroundColor = color; //* Hard coded for now.
   }
 
   rowComplete() {
     // need to plan... proabably need to splice matrice but also adjust x values for dropping pieces #tricky and might be skipped for time
   }
 
-  stop() {
-    console.log("full board");
+  handleStop() {
+    this.setState({ end: true });
   }
 }
 

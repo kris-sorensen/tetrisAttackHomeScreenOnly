@@ -1,22 +1,10 @@
 import React, { Component } from "react";
 import "./styles/float.css";
+
 // import logo from "images/tetrisLogo.png";
 
 class Float extends Component {
-  state = {
-    url: null,
-  };
-  handleClick() {
-    fetch("/play", {
-      method: "GET",
-    })
-      // .then(res => res.json())
-      // .then(data => {
-      //   body.style.background = data.color;
-      // })
-      .catch((err) => console.log(err));
-    console.log("click"); //* switch to url
-  }
+  state = {};
 
   render() {
     return (
@@ -29,8 +17,9 @@ class Float extends Component {
             className="logo"
           />
           <div className="singleMultiSlider"></div>
-          <button className="play" onClick={() => this.handleClick()}>
+          <button className="play">
             Play
+            {/* <Link to="/play">Play</Link> */}
           </button>{" "}
         </div>
       </div>

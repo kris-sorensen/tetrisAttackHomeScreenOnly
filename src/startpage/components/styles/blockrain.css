@@ -1,5 +1,7 @@
 .blockrain {
   background-color: #7574fc;
+
+  transform: rotate(45deg);
 }
 .row {
   display: flex;
@@ -11,6 +13,9 @@
 .cell {
   width: 2.9rem;
   height: 2.9rem;
+  border-radius: 2px;
+  margin: 0.5px;
+
   /* border: 0.1px solid #222; */
 }
 

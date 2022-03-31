@@ -3,8 +3,6 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 5000;
 
-// const PORT = 3000;
-
 /**
  * handle parsing request body
  */
@@ -13,18 +11,22 @@ app.use(express.json());
 /**
  * handle requests for static files
  */
-// app.use(express.static(path.join(__dirname, "../public")));
+app.use(express.static(path.join(__dirname, "./public")));
 
 //* Get Requests
+app.get("/express_backend", (req, res) => {
+  //Line 9
+  res.send({ express: "YOUR EXPRESS BACKEND IS CONNECTED TO REACT" }); //Line 10
+}); //Line 11
 
 // Homepage request from launching site
 app.get("/", (req, res) =>
-  res.status(200).sendFile(path.join(__dirname, "../public/index.html"))
+  res.status(200).sendFile(path.join(__dirname, "./public/index.html"))
 );
 
 // Game page request from pressing play.
 app.get("/play", (req, res) =>
-  res.status(200).sendFile(path.join(__dirname, "../public/game.html"))
+  res.status(200).sendFile(path.join(__dirname, "./public/game.html"))
 );
 
 // catch-all route handler for any requests to an unknown route
