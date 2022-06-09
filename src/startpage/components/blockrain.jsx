@@ -2,64 +2,52 @@ import React, { Component, useState, useEffect } from "react";
 // import Row from "./rows";R
 import "./styles/blockrain.css";
 import { tetriminos } from "./scripts/tetriminos";
-import useWindowSize from "./util/useWindowSize";
+import { createBoard, inputCells } from './setupGame'
 
 const array = []
 let dropArr = []
 let restingArr = []
 let end = false
 
+// TODO: add useContext for board. pass down as hook so you can set board in other component?
 
+console.log('board creator', createBoard)
 const Blockrain = () => {
   const [rows, setRows] = useState(31) //todo: set based on window size
   const [cells, setCells] = useState(66) //todo: set based on window size
-  // const [board, setBoard] = useState(createBoard)
-  console.log('board', board)
+  const [board, setBoard] = useState(createBoard)
 
   // Create Dom elements for rows and cells
   for (let i = 0; i <= rows - 1; i++) {
     array.push(
       <div className={`row`} key={"r" + i}>
-        {inputCells(i, cells, board)}
+        {inputCells(i, cells)}
       </div>
     );
   }
 
+
+  // const loop = () => {
+  //   if (!end) {
+  //     let placePiece = setInterval(() => {
+  //       place([board, setBoard]);
+  //     }, 2000);
+  //     let dropLoop = setInterval(() => {
+  //       drop();
+  //       handlePaint(board);
+  //     }, 50);
+  //   }
+  // }
+  // loop()
+
   return (
     <>
-      <div className="canvas">
+      <canvas className="canvas">
         {array}
         {/* {array.map((row) => row)} */}
-      </div>
+      </canvas>
     </>
   )
-}
-
-// Create Matricie
-const createBoard = () => {
-  //* need to replace length with state property rows. and Array(65) with cells. hardcoded for now
-  const board = Array.from(
-    { length: 31 },
-    () => Array(66).fill(0) //fill board with 0s,
-  );
-  return board;
-}
-
-
-const board = createBoard()
-
-
-// Create Dom elements for each cell
-const inputCells = (row, cells, board) => {
-  const cellArray = [];
-  for (let i = 0; i <= cells - 1; i++) {
-    const id = row.toString() + i;
-    // const id = `${row}${i}`;
-    const cellColorClass = `_${row}${i}`;
-    const allClasses = `cell ${cellColorClass}`;
-    cellArray.push(<div className={allClasses} key={id} />);
-  }
-  return cellArray;
 }
 
 
@@ -67,11 +55,13 @@ const inputCells = (row, cells, board) => {
 
 // * Place tetrimino
 
-const place = () => {
+const place = (board) => {
   // pick a random tetrimino
   const tetrimino = tetriminos[Math.floor(Math.random() * tetriminos.length)];
+
   // pick random spot to place tetrimino
-  const placeHere = find(tetrimino.cordinates);
+  console.log('tet cords', tetrimino)
+  const placeHere = find(tetrimino.cordinates, board);
   // create data to place into dropArr so that it will drop and paint this tetrimino while tetrimino is moving on board.
   const dropRefrence = [];
   for (let i = 0; i < tetrimino.cordinates.length; i++) {
@@ -84,16 +74,17 @@ const place = () => {
   dropRefrence.push(placeHere);
   // push to dropArr
   dropArr.push(dropRefrence);
+  console.log('place board', board)
 }
 
 
-const find = (cordinates) => {
-  const { board } = this.state;
+const find = (cordinates, board) => {
+
   // find open spots for tetrimino
   for (let x = board.length - 1; x > 0; x--) {
-    const array = [];
+    const findArray = [];
     // stop board if no spots available to place piece
-    if (x === 1) return this.handleStop(); // *might need to adjust 1
+    if (x === 1) return handleStop(); // *might need to adjust 1
 
     for (let y = 0; y < board[x].length; y++) {
       let freeSpace = true;
@@ -112,19 +103,69 @@ const find = (cordinates) => {
           // }
         }
         if (freeSpace) {
-          array.push([x, y]);
+          findArray.push([x, y]);
         }
       }
     }
     // if found a spot return a random spot to place tetrimino.
 
-    if (array.length > 0) {
-      return array[Math.floor(Math.random() * array.length)];
+    if (findArray.length > 0) {
+      return findArray[Math.floor(Math.random() * findArray.length)];
+    }
+  }
+}
+
+const handleStop = () => {
+  end = true
+}
+
+// place()
+
+
+const handlePaint = ([board, setBoard]) => {
+
+
+  for (let i = 0; i < restingArr.length; i++) {
+    for (let j = 0; j < 4; j++) {
+      board[restingArr[i][j][0]][restingArr[i][j][1]] = restingArr[i][4];
+    }
+  }
+
+  for (let i = 0; i < dropArr.length; i++) {
+    for (let j = 0; j < 4; j++) {
+      if (dropArr[i][j][0] >= 0) {
+        board[dropArr[i][j][0]][dropArr[i][j][1]] = dropArr[i][4];
+      }
+    }
+  }
+  // setBoard(board)
+  // this.setState({ board });
+}
+
+const drop = () => {
+  // const { board } = this.state;
+  // const { dropArr } = this.state;
+  // const { restingArr } = this.state;
+
+  // add 1 to x to drop piece
+  for (let i = 0; i < dropArr.length; i++) {
+    // if at resting spot
+    if (dropArr[i][0][0] === dropArr[i][5][0]) {
+      const restingSpot = dropArr.shift(); // shift CHECK d
+
+      restingSpot[4] = -Math.abs(restingSpot[4]);
+      restingArr.push(restingSpot);
+    }
+    // * need to change logic ---->
+
+    for (let x = 0; x < 4; x++) {
+      dropArr[i][x][0] = dropArr[i][x][0] + 1;
     }
   }
 }
 
 
+// loop()
 /*
 
 class Blockrain extends Component {
