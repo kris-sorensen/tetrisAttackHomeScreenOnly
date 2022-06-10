@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import Blockrain from "./blockrain";
+import Comets from "./comets";
 import Float from "./float";
 import "./styles/container.css";
+
 
 // class Container extends Component {
 //   constructor(props) {
@@ -24,7 +26,8 @@ const Container = () => {
     <div className="container">
       {" "}
       <Float></Float>
-      <Blockrain></Blockrain>
+      {/* <Blockrain></Blockrain> */}
+      <Comets />
     </div>
   );
 }
