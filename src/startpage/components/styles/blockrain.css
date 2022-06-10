@@ -3,6 +3,7 @@
 
   transform: rotate(45deg);
 }
+
 .row {
   display: flex;
   align-items: center;
@@ -26,21 +27,27 @@
 ._2 {
   background-color: #6bb9a2;
 }
+
 ._3 {
   background-color: #ff6ca6;
 }
+
 ._4 {
   background-color: #ff9677;
 }
+
 ._5 {
   background-color: #f9f871;
 }
+
 ._6 {
   background-color: #00aeef;
 }
+
 ._7 {
   background-color: #ba74fc;
 }
+
 ._8 {
   background-color: #ec64da;
 }
