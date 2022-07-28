@@ -4,27 +4,17 @@ import './styles/comets.css'
 import { Plane, OrthographicCamera } from "@react-three/drei";
 import { tetriminos } from "./scripts/tetriminos";
 import * as THREE from 'three';
-import { useControls } from 'leva';
+import { useControls, Leva } from 'leva';
 
-
-
-// todo: when play is clicked some effect with z happens zooming in on piece until it covers screen. piece would stop? or all the parts of the piece zoom in different directions
-
-// TODO: 
-/***
- * // Tetrimino right cordinates
- *  Fix overlay. make it size with scaling window. mobile friendly
- * mobile controls 
- * 1 player mode (only option mobile)
- * add useTail from drei to create a streaking trail
- */
 
 
 const Comets = () => {
     const canvasRef = useRef()
 
     return (
+
         <Canvas ref={canvasRef} id="canvas">
+            <Leva hidden />
             <Board />
         </Canvas>
     )
@@ -35,6 +25,10 @@ const Board = props => {
     useEffect(() => {
         group.current.position.y = -2
     }, [])
+
+    useFrame(() => {
+        if (canDrop) drop()
+    })
 
     const sq1 = useRef()
     const sq2 = useRef()
@@ -65,7 +59,7 @@ const Board = props => {
 
     })
 
-
+    // FUNCTIONS
     // pick a random tetrimino
     const pickTetrimino = () => tetriminos[Math.floor(Math.random() * tetriminos.length)]
 
@@ -118,9 +112,7 @@ const Board = props => {
         }
     }
 
-    useFrame(() => {
-        if (canDrop) drop()
-    })
+
 
     return (
         <Suspense>
