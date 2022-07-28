@@ -1,10 +1,12 @@
-import React, { useRef, useState, useEffect, useCallback, Suspense } from 'react';
+import React, { useRef, useEffect, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber'
 import './styles/comets.css'
 import { Plane, OrthographicCamera } from "@react-three/drei";
 import { tetriminos } from "./scripts/tetriminos";
-import { Group } from 'three';
+import * as THREE from 'three';
 import { useControls } from 'leva';
+
+
 
 // todo: when play is clicked some effect with z happens zooming in on piece until it covers screen. piece would stop? or all the parts of the piece zoom in different directions
 
@@ -14,20 +16,12 @@ import { useControls } from 'leva';
  *  Fix overlay. make it size with scaling window. mobile friendly
  * mobile controls 
  * 1 player mode (only option mobile)
+ * add useTail from drei to create a streaking trail
  */
 
 
 const Comets = () => {
-
     const canvasRef = useRef()
-
-    useEffect(() => {
-        // const canvas = canvasRef.current
-        // const context = canvas.getContext('2d')
-        // //Our first draw
-        // context.fillStyle = '#ff0000'
-        // context.fillRect(0, 0, context.canvas.width, context.canvas.height)
-    }, [])
 
     return (
         <Canvas ref={canvasRef} id="canvas">
@@ -37,9 +31,11 @@ const Comets = () => {
 }
 
 const Board = props => {
-    const [width, setWidth] = useState(window.innerWidth)
-    const [height, setHeight] = useState(window.innerHeight)
-    const [activeTetrimino, setActiveTetrimino] = useState({})
+
+    useEffect(() => {
+        group.current.position.y = -2
+    }, [])
+
     const sq1 = useRef()
     const sq2 = useRef()
     const sq3 = useRef()
@@ -48,27 +44,32 @@ const Board = props => {
     const colorRef = useRef()
     const sqArr = [sq1, sq2, sq3, sq4]
     const colorArr = ['0x6bb9a2', '0xff6ca6', '0xff9677', '0xf9f871', '0x00aeef', '0xba74fc', '0xec64da']
+    // GUI
+    const args = useControls({
+        args: {
+            label: 'Square Size',
+            value: [.035, .035], min: 0, max: 100, step: .1
+        },
+        position: {
+            value: [0, 0, 0], min: 0, max: 100
+        },
+        rotation: {
+            value: [0, 0, 0], min: -10, max: 10, step: .01,
+        }
+    })
 
+    const speedControl = useControls({
+        speed: {
+            value: 1, min: 0, max: 2, step: .001,
+        },
+
+    })
 
 
     // pick a random tetrimino
-    const pickTetrimino = () => {
-        return tetriminos[Math.floor(Math.random() * tetriminos.length)]
+    const pickTetrimino = () => tetriminos[Math.floor(Math.random() * tetriminos.length)]
 
-    }
-
-
-    useEffect(() => {
-        group.current.position.y = -2
-        // sq2.current.position.x += .035
-        // sq3.current.position.x += .035 * 2
-        // sq4.current.position.x += .035 * 3
-
-    }, [])
-
-    let speed = 1
     let canDrop = true
-
 
     const drop = () => {
 
@@ -81,17 +82,17 @@ const Board = props => {
             clearTetriminoPositions()
 
             group.current.position.y = 2
-
             group.current.position.x = Math.random() * (1 + 1) - 1
+
             newTetrimino()
             canDrop = true
         }
-        group.current.position.y -= .015 * speed
+
+        group.current.position.y -= .02 * speedControl.speed
     }
 
     const newTetrimino = () => {
         const activeTetrimino = pickTetrimino()
-        // colorRef.current.color = colorArr[3]
         positionTetrimino(activeTetrimino.cordinates)
     }
 
@@ -110,8 +111,6 @@ const Board = props => {
         }
     }
 
-
-
     const positionTetrimino = (tetrimino) => {
         for (let i = 1; i < tetrimino.length; i++) {
             if (tetrimino[i][0] !== 0) sqArr[i].current.position.x += .035 * tetrimino[i][0]
@@ -119,75 +118,39 @@ const Board = props => {
         }
     }
 
-
-    useFrame((state, delta) => { //todo: might need to clear canvas each time, add callback to params. can also detect pass canvas width and height into pick place function
-        // console.log(state.mouse)
+    useFrame(() => {
         if (canDrop) drop()
-
     })
-
-    const args = useControls({
-        args: {
-            label: 'Square Size',
-            value: [.035, .035], min: 0, max: 100, step: .1
-        },
-        position: {
-            value: [0, 0, 0], min: 0, max: 100
-        }
-    })
-
-    const args1 = useControls({
-        position: {
-            value: [0, 0, 0], min: -10, max: 10, step: .01
-        }
-    })
-
-
-    const args2 = {
-    }
-    const args3 = {
-    }
-    const args4 = {
-    }
-
-    const groupArgs = {
-
-    }
 
     return (
         <Suspense>
+            {/* <OrbitControls /> */}
             <OrthographicCamera position={[0, 0, 4.3]}>
-                <group ref={group} {...groupArgs} >
+                <group ref={group}  >
                     <mesh>
-                        <Plane ref={sq1} {...args1} {...args} >
+                        <Plane ref={sq1} {...args}   >
+                            <meshBasicMaterial side={THREE.DoubleSide} ref={colorRef} />
+                        </Plane>
+                    </mesh>
+                    <mesh>
+                        <Plane ref={sq2} {...args} >
                             <meshBasicMaterial ref={colorRef} />
                         </Plane>
                     </mesh>
                     <mesh>
-                        <Plane ref={sq2} {...args} {...args2}>
+                        <Plane ref={sq3} {...args}  >
                             <meshBasicMaterial ref={colorRef} />
                         </Plane>
                     </mesh>
                     <mesh>
-                        <Plane ref={sq3} {...args}  {...args3} >
-                            <meshBasicMaterial ref={colorRef} />
-                        </Plane>
-                    </mesh>
-                    <mesh>
-                        <Plane ref={sq4} {...args} {...args4} >
+                        <Plane ref={sq4} {...args}  >
                             <meshBasicMaterial ref={colorRef} />
                         </Plane>
                     </mesh>
                 </group>
             </OrthographicCamera>
-        </Suspense>
+        </Suspense >
     )
-}
-
-
-
-const clearCanvas = () => {
-
 }
 
 export default Comets;
