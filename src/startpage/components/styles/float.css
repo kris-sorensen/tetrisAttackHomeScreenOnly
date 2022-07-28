@@ -48,6 +48,7 @@
   transition: background-color 2.5s;
   color: black;
 }
+
 .logo {
   padding: 2rem;
   /* background-color: black; */
@@ -64,15 +65,3 @@
   top: 20%;
   transform: translateY(-50%);
 }
-
-/* .logo-container {
-    display: flex;
-    justify-content: center;
-    height: 6rem;
-    width: auto;
-    margin-bottom: 0.5rem;
-  }
-  
-  .logo__image {
-    display: inline-flex;
-  } */
