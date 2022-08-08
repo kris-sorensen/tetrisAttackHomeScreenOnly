@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber'
 import './styles/comets.css'
-import { Plane, OrthographicCamera, Trail, Float, OrbitControls } from "@react-three/drei";
+import { Plane, OrthographicCamera, OrbitControls } from "@react-three/drei";
 import { tetriminos } from "./scripts/tetriminos";
 import * as THREE from 'three';
 import { useControls, Leva } from 'leva';
