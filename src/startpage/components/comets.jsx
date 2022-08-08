@@ -1,27 +1,33 @@
 import React, { useRef, useEffect, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber'
 import './styles/comets.css'
-import { Plane, OrthographicCamera } from "@react-three/drei";
+import { Plane, OrthographicCamera, Trail, Float, OrbitControls } from "@react-three/drei";
 import { tetriminos } from "./scripts/tetriminos";
 import * as THREE from 'three';
 import { useControls, Leva } from 'leva';
 
-
+//todo: place drop and tetrimino rendering logic in custom hooks that all components can share
 
 const Comets = () => {
     const canvasRef = useRef()
+    const tetriminoArr = []
+    const count = 25
+
+    for (let i = 0; i < count; i++) {
+        tetriminoArr.push(<Board key={i} />)
+    }
 
     return (
-
         <Canvas ref={canvasRef} id="canvas">
-            <Leva hidden />
-            <Board />
+            <OrthographicCamera position={[0, 0, 4.3]}>
+                <Leva hidden />
+                {tetriminoArr}
+            </OrthographicCamera>
         </Canvas>
     )
 }
 
 const Board = props => {
-
     useEffect(() => {
         group.current.position.y = -2
     }, [])
@@ -42,7 +48,7 @@ const Board = props => {
     const args = useControls({
         args: {
             label: 'Square Size',
-            value: [.035, .035], min: 0, max: 100, step: .1
+            value: [.02, .02], min: 0, max: 100, step: .1
         },
         position: {
             value: [0, 0, 0], min: 0, max: 100
@@ -54,9 +60,8 @@ const Board = props => {
 
     const speedControl = useControls({
         speed: {
-            value: 1, min: 0, max: 2, step: .001,
+            value: .17, min: 0, max: 2, step: .001,
         },
-
     })
 
     // FUNCTIONS
@@ -64,10 +69,10 @@ const Board = props => {
     const pickTetrimino = () => tetriminos[Math.floor(Math.random() * tetriminos.length)]
 
     let canDrop = true
-
+    let speedRandomizer = Math.random() + .5
     const drop = () => {
 
-        if (group.current.position.y < -1) {
+        if (group.current.position.y < -.7) {
             canDrop = false
             // Set New Color
             setColor(group.current.children)
@@ -75,14 +80,18 @@ const Board = props => {
             // Reset Tetrimino Position
             clearTetriminoPositions()
 
-            group.current.position.y = 2
+            group.current.position.y = Math.random() * (4 - .7) + .7
             group.current.position.x = Math.random() * (1 + 1) - 1
+
+            //Reset SpeedRandomizer
+            speedRandomizer = Math.random() + .5
 
             newTetrimino()
             canDrop = true
         }
 
-        group.current.position.y -= .02 * speedControl.speed
+        //Lower Tetrimino
+        group.current.position.y -= .02 * speedControl.speed * speedRandomizer
     }
 
     const newTetrimino = () => {
@@ -107,41 +116,37 @@ const Board = props => {
 
     const positionTetrimino = (tetrimino) => {
         for (let i = 1; i < tetrimino.length; i++) {
-            if (tetrimino[i][0] !== 0) sqArr[i].current.position.x += .035 * tetrimino[i][0]
-            if (tetrimino[i][1] !== 0) sqArr[i].current.position.y += .035 * tetrimino[i][1]
+            if (tetrimino[i][0] !== 0) sqArr[i].current.position.x += args.args[0] * tetrimino[i][0]
+            if (tetrimino[i][1] !== 0) sqArr[i].current.position.y += args.args[1] * tetrimino[i][1]
         }
     }
 
-
-
     return (
-        <Suspense>
+        <Suspense fallback={null}>
             {/* <OrbitControls /> */}
-            <OrthographicCamera position={[0, 0, 4.3]}>
-                <group ref={group}  >
-                    <mesh>
-                        <Plane ref={sq1} {...args}   >
-                            <meshBasicMaterial side={THREE.DoubleSide} ref={colorRef} />
-                        </Plane>
-                    </mesh>
-                    <mesh>
-                        <Plane ref={sq2} {...args} >
-                            <meshBasicMaterial ref={colorRef} />
-                        </Plane>
-                    </mesh>
-                    <mesh>
-                        <Plane ref={sq3} {...args}  >
-                            <meshBasicMaterial ref={colorRef} />
-                        </Plane>
-                    </mesh>
-                    <mesh>
-                        <Plane ref={sq4} {...args}  >
-                            <meshBasicMaterial ref={colorRef} />
-                        </Plane>
-                    </mesh>
-                </group>
-            </OrthographicCamera>
-        </Suspense >
+            <group ref={group}  >
+                <mesh>
+                    <Plane ref={sq1} {...args}   >
+                        <meshBasicMaterial ref={colorRef} />
+                    </Plane>
+                </mesh>
+                <mesh>
+                    <Plane ref={sq2} {...args} >
+                        <meshBasicMaterial ref={colorRef} />
+                    </Plane>
+                </mesh>
+                <mesh>
+                    <Plane ref={sq3} {...args}  >
+                        <meshBasicMaterial ref={colorRef} />
+                    </Plane>
+                </mesh>
+                <mesh>
+                    <Plane ref={sq4} {...args}  >
+                        <meshBasicMaterial ref={colorRef} />
+                    </Plane>
+                </mesh>
+            </group>
+        </Suspense>
     )
 }
 

@@ -5,7 +5,6 @@ const L = {
     [0, 2],
     [-1, 2],
   ],
-  color: 2,
 }; // horizontal
 const L2 = {
   cordinates: [
@@ -14,7 +13,6 @@ const L2 = {
     [-1, 0],
     [-2, 0],
   ],
-  color: 2,
 }; // vertical right
 const L3 = {
   cordinates: [
@@ -23,7 +21,6 @@ const L3 = {
     [-1, 1],
     [-1, 2],
   ],
-  color: 2,
 }; // horizontal pointing down
 const L4 = {
   cordinates: [
@@ -32,7 +29,6 @@ const L4 = {
     [1, 1],
     [2, 1],
   ],
-  color: 2,
 }; // vertical left
 const J = {
   cordinates: [
@@ -41,7 +37,6 @@ const J = {
     [0, 2],
     [-1, 0],
   ],
-  color: 3,
 }; // horizontal up
 
 const J2 = {
@@ -51,7 +46,6 @@ const J2 = {
     [-1, 1],
     [-2, 1],
   ],
-  color: 3,
 }; // vertical long bottom left
 const J3 = {
   cordinates: [
@@ -60,7 +54,6 @@ const J3 = {
     [0, 2],
     [1, 2],
   ],
-  color: 3,
 }; // horizontal down
 
 const J4 = {
@@ -70,7 +63,6 @@ const J4 = {
     [-2, 0],
     [-2, 1],
   ],
-  color: 3,
 }; // vertical right
 const S = {
   cordinates: [
@@ -79,7 +71,6 @@ const S = {
     [-1, 1],
     [-1, 2],
   ],
-  color: 4,
 }; // horizontal
 const S2 = {
   cordinates: [
@@ -88,7 +79,6 @@ const S2 = {
     [-1, -1],
     [-2, -1],
   ],
-  color: 4,
 }; // vertical
 const Z = {
   cordinates: [
@@ -97,7 +87,6 @@ const Z = {
     [-1, -1],
     [-1, 0],
   ],
-  color: 5,
 }; // horizontal
 const Z2 = {
   cordinates: [
@@ -106,7 +95,6 @@ const Z2 = {
     [-1, 1],
     [-2, 1],
   ],
-  color: 5,
 }; // vertical
 const O = {
   cordinates: [
@@ -115,7 +103,6 @@ const O = {
     [-1, 0],
     [-1, 1],
   ],
-  color: 6,
 };
 
 const T = {
@@ -125,7 +112,6 @@ const T = {
     [0, 2],
     [-1, 1],
   ],
-  color: 7,
 }; // pointing up
 const T2 = {
   cordinates: [
@@ -134,7 +120,6 @@ const T2 = {
     [-1, 0],
     [-2, 0],
   ],
-  color: 7,
 }; // pointing left
 const T3 = {
   cordinates: [
@@ -143,7 +128,6 @@ const T3 = {
     [-1, 1],
     [-2, 0],
   ],
-  color: 7,
 }; // pointing right
 const T4 = {
   cordinates: [
@@ -152,7 +136,6 @@ const T4 = {
     [-1, 0],
     [-1, 1],
   ],
-  color: 7,
 }; // pointing down
 const I = {
   cordinates: [
@@ -161,7 +144,6 @@ const I = {
     [-2, 0],
     [-3, 0],
   ],
-  color: 8,
 }; // vertical
 
 const I2 = {
@@ -171,7 +153,6 @@ const I2 = {
     [0, 2],
     [0, 3],
   ],
-  color: 8,
 }; // horizontal
 
 // for cordinates: start from bottom of piece and work way up. when droping if undefined because it is off the board don't show. this will give it the look of coming onto the board from somewhere higher. will look cooler

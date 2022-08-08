@@ -4,7 +4,6 @@ import "./styles/float.css";
 // import logo from "images/tetrisLogo.png";
 
 class Float extends Component {
-  state = {};
 
   render() {
     return (
@@ -20,7 +19,7 @@ class Float extends Component {
           <button className="play">
             Play
             {/* <Link to="/play">Play</Link> */}
-          </button>{" "}
+          </button>
         </div>
       </div>
     );

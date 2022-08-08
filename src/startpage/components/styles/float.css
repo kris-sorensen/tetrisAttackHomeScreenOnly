@@ -1,4 +1,10 @@
 .float {
+  -webkit-user-select: none;
+  /* Safari */
+  -ms-user-select: none;
+  /* IE 10 and IE 11 */
+  user-select: none;
+  /* Standard syntax */
   width: 70rem;
   height: 40rem;
   position: absolute;
@@ -11,16 +17,13 @@
   right: 0;
   top: 45%;
   transform: translateY(-50%);
-
-  /* background-color: #7574fc; */
-  /* display: flex;
-  justify-content: center;
-  align-items: center;
-*/
+  /* padding: 6rem; */
+  /* background-color: rgba(255, 255, 255, 0.1); */
 }
 
 .play {
-  width: 30rem;
+  cursor: pointer;
+  width: 25rem;
   height: 8rem;
   position: absolute;
   display: block;
@@ -53,7 +56,7 @@
   padding: 2rem;
   /* background-color: black; */
   width: auto;
-  height: 9rem;
+  height: 8.5rem;
   position: absolute;
   display: block;
   z-index: 12;
@@ -64,4 +67,21 @@
   right: 0;
   top: 20%;
   transform: translateY(-50%);
+}
+
+
+@media screen and (max-width: 1150px),
+(max-height: 620px) {
+
+  .logo {
+    height: 6.5rem;
+    top: 30%;
+  }
+
+  .play {
+    height: 7rem;
+    width: 20rem;
+    font-size: 2.5rem;
+  }
+
 }
