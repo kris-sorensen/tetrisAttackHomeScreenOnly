@@ -157,7 +157,7 @@ const Tetrimino = props => {
 const SemiTransparentLayer = () => {
     return (
         <mesh position={[0, 0, -.1]} >
-            <planeGeometry args={[4, 2]} />
+            <planeGeometry args={[4, 2, 1, 1]} />
             <meshBasicMaterial color='#000000' transparent={true} opacity={.15} />
         </mesh>
     )
