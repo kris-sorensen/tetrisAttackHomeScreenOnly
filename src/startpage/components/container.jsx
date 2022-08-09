@@ -8,7 +8,6 @@ const Container = () => {
     <div className="container">
       <Float></Float>
       <Comets />
-
     </div>
   );
 }

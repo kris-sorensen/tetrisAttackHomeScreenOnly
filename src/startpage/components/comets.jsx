@@ -1,44 +1,44 @@
 import React, { useRef, useEffect, Suspense } from 'react';
-import { Canvas, useFrame, useThree, extend } from '@react-three/fiber'
+import { Canvas, useFrame } from '@react-three/fiber'
 import './styles/comets.css'
-import { Plane, OrthographicCamera, OrbitControls, Effects } from "@react-three/drei";
+import { Plane, OrthographicCamera, Effects, Loader } from "@react-three/drei";
 import { tetriminos } from "./scripts/tetriminos";
 import * as THREE from 'three';
 import { useControls, Leva } from 'leva';
-import { EffectComposer, DepthOfField, Bloom, Noise, Vignette } from '@react-three/postprocessing'
 
-//todo: place drop and tetrimino rendering logic in custom hooks that all components can share
+//todo: place tetrimino rendering logic in custom hooks that all components can share
 const Comets = () => {
     const canvasRef = useRef()
-
+    // Generate X amount of Tetriminos
     const tetriminoArr = []
     const count = 15
-
-
     for (let i = 0; i < count; i++) {
-        tetriminoArr.push(<Board key={i} />)
+        tetriminoArr.push(<Tetrimino key={i} />)
     }
-    // console.log(EffectComposer)
-    // antialias: true,   autoClearColor: false, preserveDrawingBuffer: true,
+
     return (
-        <Canvas gl={{ gamaOutput: true, autoClearColor: false, preserveDrawingBuffer: true, }} ref={canvasRef} id="canvas" >
-            {/* <Canvas ref={canvasRef} id="canvas" > */}
-            {/* <OrbitControls /> */}
-            {/* <color attach="background" args={['blue']} /> */}
-            <OrthographicCamera position={[0, 0, 4.3]}>
-                <Leva hidden />
-                <SemiTransparentLayer />
-                <Effects multisamping={8} renderIndex={1} disableGamma={false} disableRenderPass={false} disableRender={false}>
-                    {/* <afterimagePass args={[0.8]} /> */}
-                </Effects>
-                {tetriminoArr}
-            </OrthographicCamera>
-        </Canvas>
+        <>
+            <Canvas gl={{ gamaOutput: true, autoClearColor: false, preserveDrawingBuffer: true, }} ref={canvasRef} id="canvas" >
+                <Suspense fallback={null}>
+                    {/* <OrbitControls /> */}
+                    <OrthographicCamera position={[0, 0, 4.3]}>
+                        <Leva hidden />
+                        <SemiTransparentLayer />
+                        <Effects multisamping={8} renderIndex={1} disableGamma={false} disableRenderPass={false} disableRender={false}>
+                            {/* <afterimagePass args={[0.8]} /> */}
+                        </Effects>
+                        {tetriminoArr}
+                    </OrthographicCamera>
+                </Suspense>
+            </Canvas>
+            <Loader />
+        </>
     )
 }
 
-const Board = props => {
+const Tetrimino = props => {
     useEffect(() => {
+        // Set inital positioning
         group.current.position.y = -2
     }, [])
 
@@ -46,32 +46,24 @@ const Board = props => {
         if (canDrop) {
 
             if (group.current.position.y < -.7) {
-                // console.log(group.current)
                 canDrop = false
                 // Set New Color
                 setColor(group.current.children)
-
                 // Reset Tetrimino Position
                 clearTetriminoPositions()
-
+                // Pick new Position
                 group.current.position.y = Math.random() * (2 - .7) + .7
                 group.current.position.x = Math.random() * (1 + 1) - 1
-
-                //Reset SpeedRandomizer
+                //Pick Random Drop Speed
                 speedRandomizer = Math.random() + .5
-
+                // Pick new Tetrimino
                 newTetrimino()
-
                 canDrop = true
             }
-
-
             //Lower Tetrimino
             group.current.position.y -= .02 * speedControl.speed * speedRandomizer
         }
-        // drop()
     })
-
 
     const sq1 = useRef()
     const sq2 = useRef()
@@ -101,7 +93,8 @@ const Board = props => {
         },
     })
 
-    // FUNCTIONS
+    // FUNCTIONS 
+    // todo: move to seperate file so all components can use
     // pick a random tetrimino
     const pickTetrimino = () => tetriminos[Math.floor(Math.random() * tetriminos.length)]
 
@@ -119,7 +112,6 @@ const Board = props => {
         for (let i = 0; i < sqArr.length; i++) {
             sqArr[i].current.material.color.setHex(colorArr[color])
         }
-        // console.log(sqArr[0].current.material.color)
     }
 
     const clearTetriminoPositions = () => {
@@ -137,36 +129,32 @@ const Board = props => {
     }
 
     return (
-        <Suspense fallback={null}>
-
-            <group ref={group}  >
-                <mesh>
-                    <Plane ref={sq1} {...args}   >
-                        <meshBasicMaterial ref={colorRef} />
-                    </Plane>
-                </mesh>
-                <mesh>
-                    <Plane ref={sq2} {...args} >
-                        <meshBasicMaterial ref={colorRef} />
-                    </Plane>
-                </mesh>
-                <mesh>
-                    <Plane ref={sq3} {...args}  >
-                        <meshBasicMaterial ref={colorRef} />
-                    </Plane>
-                </mesh>
-                <mesh>
-                    <Plane ref={sq4} {...args}  >
-                        <meshBasicMaterial ref={colorRef} />
-                    </Plane>
-                </mesh>
-            </group>
-        </Suspense>
+        <group ref={group}  >
+            <mesh>
+                <Plane ref={sq1} {...args}   >
+                    <meshBasicMaterial ref={colorRef} />
+                </Plane>
+            </mesh>
+            <mesh>
+                <Plane ref={sq2} {...args} >
+                    <meshBasicMaterial ref={colorRef} />
+                </Plane>
+            </mesh>
+            <mesh>
+                <Plane ref={sq3} {...args}  >
+                    <meshBasicMaterial ref={colorRef} />
+                </Plane>
+            </mesh>
+            <mesh>
+                <Plane ref={sq4} {...args}  >
+                    <meshBasicMaterial ref={colorRef} />
+                </Plane>
+            </mesh>
+        </group>
     )
 }
-
+// Creates a semi-transparent Layer over camera that creates a trail effect when renderer/gl is set to: autoClearColor: false, and preserveDrawingBuffer: true
 const SemiTransparentLayer = () => {
-
     return (
         <mesh position={[0, 0, -.1]} >
             <planeGeometry args={[4, 2]} />
