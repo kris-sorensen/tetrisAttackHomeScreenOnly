@@ -1,26 +1,36 @@
 import React, { useRef, useEffect, Suspense } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame, useThree, extend } from '@react-three/fiber'
 import './styles/comets.css'
-import { Plane, OrthographicCamera, OrbitControls } from "@react-three/drei";
+import { Plane, OrthographicCamera, OrbitControls, Effects } from "@react-three/drei";
 import { tetriminos } from "./scripts/tetriminos";
 import * as THREE from 'three';
 import { useControls, Leva } from 'leva';
+import { EffectComposer, DepthOfField, Bloom, Noise, Vignette } from '@react-three/postprocessing'
 
 //todo: place drop and tetrimino rendering logic in custom hooks that all components can share
-
 const Comets = () => {
     const canvasRef = useRef()
+
     const tetriminoArr = []
-    const count = 25
+    const count = 15
+
 
     for (let i = 0; i < count; i++) {
         tetriminoArr.push(<Board key={i} />)
     }
-
+    // console.log(EffectComposer)
+    // antialias: true,   autoClearColor: false, preserveDrawingBuffer: true,
     return (
-        <Canvas ref={canvasRef} id="canvas">
+        <Canvas gl={{ gamaOutput: true, autoClearColor: false, preserveDrawingBuffer: true, }} ref={canvasRef} id="canvas" >
+            {/* <Canvas ref={canvasRef} id="canvas" > */}
+            {/* <OrbitControls /> */}
+            {/* <color attach="background" args={['blue']} /> */}
             <OrthographicCamera position={[0, 0, 4.3]}>
                 <Leva hidden />
+                <SemiTransparentLayer />
+                <Effects multisamping={8} renderIndex={1} disableGamma={false} disableRenderPass={false} disableRender={false}>
+                    {/* <afterimagePass args={[0.8]} /> */}
+                </Effects>
                 {tetriminoArr}
             </OrthographicCamera>
         </Canvas>
@@ -33,8 +43,35 @@ const Board = props => {
     }, [])
 
     useFrame(() => {
-        if (canDrop) drop()
+        if (canDrop) {
+
+            if (group.current.position.y < -.7) {
+                // console.log(group.current)
+                canDrop = false
+                // Set New Color
+                setColor(group.current.children)
+
+                // Reset Tetrimino Position
+                clearTetriminoPositions()
+
+                group.current.position.y = Math.random() * (2 - .7) + .7
+                group.current.position.x = Math.random() * (1 + 1) - 1
+
+                //Reset SpeedRandomizer
+                speedRandomizer = Math.random() + .5
+
+                newTetrimino()
+
+                canDrop = true
+            }
+
+
+            //Lower Tetrimino
+            group.current.position.y -= .02 * speedControl.speed * speedRandomizer
+        }
+        // drop()
     })
+
 
     const sq1 = useRef()
     const sq2 = useRef()
@@ -60,7 +97,7 @@ const Board = props => {
 
     const speedControl = useControls({
         speed: {
-            value: .17, min: 0, max: 2, step: .001,
+            value: .06, min: 0, max: 1, step: .001,
         },
     })
 
@@ -70,29 +107,6 @@ const Board = props => {
 
     let canDrop = true
     let speedRandomizer = Math.random() + .5
-    const drop = () => {
-
-        if (group.current.position.y < -.7) {
-            canDrop = false
-            // Set New Color
-            setColor(group.current.children)
-
-            // Reset Tetrimino Position
-            clearTetriminoPositions()
-
-            group.current.position.y = Math.random() * (4 - .7) + .7
-            group.current.position.x = Math.random() * (1 + 1) - 1
-
-            //Reset SpeedRandomizer
-            speedRandomizer = Math.random() + .5
-
-            newTetrimino()
-            canDrop = true
-        }
-
-        //Lower Tetrimino
-        group.current.position.y -= .02 * speedControl.speed * speedRandomizer
-    }
 
     const newTetrimino = () => {
         const activeTetrimino = pickTetrimino()
@@ -105,6 +119,7 @@ const Board = props => {
         for (let i = 0; i < sqArr.length; i++) {
             sqArr[i].current.material.color.setHex(colorArr[color])
         }
+        // console.log(sqArr[0].current.material.color)
     }
 
     const clearTetriminoPositions = () => {
@@ -123,7 +138,7 @@ const Board = props => {
 
     return (
         <Suspense fallback={null}>
-            {/* <OrbitControls /> */}
+
             <group ref={group}  >
                 <mesh>
                     <Plane ref={sq1} {...args}   >
@@ -147,6 +162,16 @@ const Board = props => {
                 </mesh>
             </group>
         </Suspense>
+    )
+}
+
+const SemiTransparentLayer = () => {
+
+    return (
+        <mesh position={[0, 0, -.1]} >
+            <planeGeometry args={[4, 2]} />
+            <meshBasicMaterial color='#000000' transparent={true} opacity={.15} />
+        </mesh>
     )
 }
 
