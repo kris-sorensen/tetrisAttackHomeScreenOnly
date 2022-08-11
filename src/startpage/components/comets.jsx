@@ -18,7 +18,7 @@ const Comets = () => {
 
     return (
         <>
-            <Canvas gl={{ gamaOutput: true, autoClearColor: false, preserveDrawingBuffer: true, }} ref={canvasRef} id="canvas" >
+            <Canvas gl={{ autoClearColor: false, }} ref={canvasRef} id="canvas" >
                 <Suspense fallback={null}>
                     {/* <OrbitControls /> */}
                     <OrthographicCamera position={[0, 0, 4.3]}>
